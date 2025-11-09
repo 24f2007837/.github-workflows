@@ -1,0 +1,39 @@
+name: Multi-Platform Matrix Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build on Node v${{ matrix.version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        version: [14, 16, 18]   # 3 parallel Node.js versions
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Required identifier step
+      - name: matrix-da662be
+        run: echo "Building for Node version ${{ matrix.version }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.version }}
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Node version ${{ matrix.version }}" > output-${{ matrix.version }}.txt
+          echo "Timestamp: $(date)" >> output-${{ matrix.version }}.txt
+          echo "Node version: ${{ matrix.version }}" >> output-${{ matrix.version }}.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-da662be-v${{ matrix.version }}
+          path: output-${{ matrix.version }}.txt
